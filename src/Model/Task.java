@@ -1,5 +1,7 @@
 package Model;
 
+import java.util.Objects;
+
 public class Task {
     protected static int count;
 
@@ -7,6 +9,24 @@ public class Task {
     protected String name;
     protected String description;
     protected Status status;
+
+    public enum Status {
+        NEW,
+        IN_PROGRESS,
+        DONE
+    }
+
+    public Task(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
+    public Task(String name, String description, Status status) {
+        this.id = count += 1;
+        this.name = name;
+        this.description = description;
+        this.status = status;
+    }
 
     public int getId() {
         return id;
@@ -36,18 +56,6 @@ public class Task {
         this.status = status;
     }
 
-    public Task(String name, String description) {
-        this.name = name;
-        this.description = description;
-    }
-
-    public Task(String name, String description, Status status) {
-        this.id = count += 1;
-        this.name = name;
-        this.description = description;
-        this.status = status;
-    }
-
     @Override
     public String toString() {
         return "Task{" +
@@ -55,16 +63,7 @@ public class Task {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +
-                '}';
+                '}' + "\n";
     }
-
-
-    public enum Status {
-        NEW,
-        IN_PROGRESS,
-        DONE
-    }
-
-
 }
 

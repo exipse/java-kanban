@@ -4,22 +4,21 @@ import java.util.ArrayList;
 
 public class Epic extends Task {
 
-    ArrayList<Integer> subTaskId = new ArrayList<>();
+    private ArrayList<Integer> subTaskIds = new ArrayList<>();
 
-    public ArrayList<Integer> getSubTaskId() {
-        return subTaskId;
+    public Epic(String name, String description) {
+        super(name, description);
+        this.id = count = count + 1;
+        this.status = Status.NEW;
+    }
+
+    public ArrayList<Integer> getSubTaskIds() {
+        return subTaskIds;
     }
 
     public void setSubTaskId(ArrayList<Integer> subTaskId) {
-        this.subTaskId = subTaskId;
+        this.subTaskIds = subTaskId;
     }
-
-    public Epic(String name, String description){
-        super(name, description);
-        this.id = count = count +1;
-        this.status = Status.NEW;
- }
-
 
     @Override
     public String toString() {
@@ -28,7 +27,7 @@ public class Epic extends Task {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status + '\'' +
-                ", subTaskId=" + subTaskId +
-                '}';
+                ", subTaskIds=" + subTaskIds +
+                '}' + "\n";
     }
 }

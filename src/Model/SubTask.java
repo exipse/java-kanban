@@ -1,18 +1,19 @@
 package Model;
 
+import java.util.Objects;
+
 public class SubTask extends Task {
 
-    public int getEpicId() {
-        return epicId;
-    }
-
-    int epicId;
+    private int epicId;
 
     public SubTask(String name, String description, Status status, int epic) {
         super(name, description, status);
         this.epicId = epic;
     }
 
+    public int getEpicId() {
+        return epicId;
+    }
 
     @Override
     public String toString() {
@@ -22,6 +23,6 @@ public class SubTask extends Task {
                 ", description='" + description + '\'' +
                 ", status=" + status + '\'' +
                 ", epicId=" + epicId +
-                '}';
+                '}' + "\n";
     }
 }
