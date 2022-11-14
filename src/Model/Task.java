@@ -1,7 +1,5 @@
 package Model;
 
-import java.util.Objects;
-
 public class Task {
     protected static int count;
 
@@ -9,12 +7,6 @@ public class Task {
     protected String name;
     protected String description;
     protected Status status;
-
-    public enum Status {
-        NEW,
-        IN_PROGRESS,
-        DONE
-    }
 
     public Task(String name, String description) {
         this.name = name;
