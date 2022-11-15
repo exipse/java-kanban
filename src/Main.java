@@ -1,4 +1,6 @@
 import Model.*;
+import Manager.InMemoryTaskManager;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,7 +97,7 @@ public class Main {
         }
 
         //Обновление таски
-        Task task = (Task) manInMem.tasks.get(1);
+        Task task = (Task) manInMem.getTasks().get(1);
         if (task != null) {
             task.setName("Обновленная Таска - 1");
             task.setDescription("Новое Описание 1");
@@ -111,7 +113,7 @@ public class Main {
         }
 
         //Обновление эпика
-        Epic epic = (Epic) manInMem.epics.get(3);
+        Epic epic = (Epic) manInMem.getEpics().get(3);
         if (epic != null) {
             epic.setName("Измененный Эпик 1");
             epic.setDescription("Обновленное Описание");
@@ -126,7 +128,7 @@ public class Main {
         }
 
         //Обновление саптаски
-        SubTask sub = (SubTask) manInMem.subtasks.get(5);
+        SubTask sub = (SubTask) manInMem.getSubtasks().get(5);
         if (sub != null) {
             sub.setName("НОВАЯ- СабТаска 2из2 в эпике 1");
             sub.setDescription("НОВОЕ Описание 2");
@@ -194,7 +196,7 @@ public class Main {
             System.out.println("\nПолучение списка сабтасок: " + aSub);
         }
 
-       history = manInMem.getHistory();
+        history = manInMem.getHistory();
         for (Task taskHistory : history) {
             System.out.println(taskHistory);
         }

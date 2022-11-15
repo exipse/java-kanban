@@ -1,6 +1,6 @@
-import History.HistoryManager;
-import History.InMemoryHistoryManager;
-import TaskManager.TaskManager;
+package Manager;
+
+import History.*;
 
 public final class Managers<T extends TaskManager> {
 

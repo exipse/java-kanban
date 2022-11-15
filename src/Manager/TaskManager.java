@@ -1,4 +1,4 @@
-package TaskManager;
+package Manager;
 
 import Model.Epic;
 import Model.SubTask;
@@ -30,7 +30,7 @@ public interface TaskManager {
 
     public SubTask getSubTask(int id);
 
-   //Получение истории по просмотренным таскам/сабтаскам/эпикам
+    //Получение истории по просмотренным таскам/сабтаскам/эпикам
     public List<Task> getHistory();
 
     //Получение списка всех подзадач определённого эпика.

@@ -1,6 +1,5 @@
 package History;
 
-import History.HistoryManager;
 import Model.Task;
 
 import java.util.ArrayList;
@@ -16,17 +15,12 @@ public class InMemoryHistoryManager implements HistoryManager {
         return logAllTasks;
     }
 
-    //метод поддержания актуальности таблицы истории
-    public  void actualTableHistory() {
+    @Override
+    //метод добавления тасок/эпиков/сабтасок в историю
+    public void add(Task task) {
         if (logAllTasks.size() == 10) {
             logAllTasks.remove(0);
         }
+        logAllTasks.add(task);
     }
-
-//метод который будет помечать задачи как просмотренные
-    @Override
-    public void add(Task task) {
-        //что то будет
-    }
-
 }
