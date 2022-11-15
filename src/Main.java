@@ -196,6 +196,7 @@ public class Main {
             System.out.println("\nПолучение списка сабтасок: " + aSub);
         }
 
+        //Вывод на экран истории просмотра тасок/сабтасок/эпиков
         history = manInMem.getHistory();
         for (Task taskHistory : history) {
             System.out.println(taskHistory);

@@ -40,24 +40,28 @@ public class InMemoryTaskManager implements TaskManager {
         return epic;
     }
 
+
     // Метод создание "Сабтаски"
     @Override
     public SubTask createSubTask(SubTask sub) {
-        if (!(epics.containsKey(sub.getEpicId()) == false)) {
+        if (epics.containsKey(sub.getEpicId())) {
             subtasks.put(sub.getId(), sub);
             (epics.get(sub.getEpicId())).getSubTaskIds().add(sub.getId());
             setEpicStatus(sub);
+            return sub;
         }
-        return sub;
+        return null;
     }
+
 
     //Метод Обновление Таски
     @Override
     public Task updateTask(Task task) {
         if (tasks.containsKey(task.getId())) {
             tasks.put(task.getId(), task);
+            return task;
         }
-        return task;
+        return null;
     }
 
     //Обновление Эпика
@@ -65,8 +69,9 @@ public class InMemoryTaskManager implements TaskManager {
     public Epic updateEpic(Epic epic) {
         if (epics.containsKey(epic.getId())) {
             epics.put(epic.getId(), epic);
+            return epic;
         }
-        return epic;
+        return null;
     }
 
     //Обновление Сабтасок
@@ -75,29 +80,32 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtasks.containsKey(sub.getId())) {
             subtasks.put(sub.getId(), sub);
             setEpicStatus(sub);
+            return sub;
         }
-        return sub;
+        return null;
     }
 
 
     //Получение таски по идентификатору
     @Override
     public Task getTask(int id) {
-        if (tasks.containsKey(id) == true) {
+        if (tasks.containsKey(id)) {
             history.add(tasks.get(id));
             history.getHistory();
+            return tasks.get(id);
         }
-        return tasks.get(id);
+        return null;
     }
 
     //Получение Эпика по идентификатору
     @Override
     public Epic getEpic(int id) {
-        if (epics.containsKey(id) == true) {
+        if (epics.containsKey(id)) {
             history.add(epics.get(id));
             history.getHistory();
+            return epics.get(id);
         }
-        return epics.get(id);
+        return null;
 
     }
 
@@ -105,24 +113,25 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public ArrayList<SubTask> getAllSubTaskByEpic(int id) {
         ArrayList<SubTask> subTasksList = new ArrayList<>();
-        if (epics.containsKey(id) == true) {
+        if (epics.containsKey(id)) {
             Epic epic = epics.get(id);
             for (Integer subtask : epic.getSubTaskIds()) {
                 subTasksList.add(subtasks.get(subtask));
             }
+            return subTasksList;
         }
-        return subTasksList;
+        return null;
     }
 
     //Получение Сабтаска по идентификатору
     @Override
     public SubTask getSubTask(int id) {
-        if (subtasks.containsKey(id) == true) {
+        if (subtasks.containsKey(id)) {
             history.add(subtasks.get(id));
             history.getHistory();
+            return subtasks.get(id);
         }
-        return subtasks.get(id);
-
+        return null;
     }
 
     //Метод получения истории по последним 10 просмотренным задачам
@@ -139,8 +148,9 @@ public class InMemoryTaskManager implements TaskManager {
             for (Task task : tasks.values()) {
                 tasksList.add(tasks.get(task.getId()));
             }
+            return tasksList;
         }
-        return tasksList;
+        return null;
     }
 
     //Получение списка всех эпиков
@@ -151,8 +161,9 @@ public class InMemoryTaskManager implements TaskManager {
             for (Epic epic : epics.values()) {
                 epicsList.add(epics.get(epic.getId()));
             }
+            return epicsList;
         }
-        return epicsList;
+        return null;
     }
 
     //Получение списка всех сабтасок
@@ -163,8 +174,9 @@ public class InMemoryTaskManager implements TaskManager {
             for (SubTask subTask : subtasks.values()) {
                 subTasksList.add(subtasks.get(subTask.getId()));
             }
+            return subTasksList;
         }
-        return subTasksList;
+        return null;
     }
 
     //Удаление таски по идентификатору
@@ -198,7 +210,7 @@ public class InMemoryTaskManager implements TaskManager {
     public boolean deleteSubTaskById(int id) {
         if (subtasks.containsKey(id)) {
             for (Epic epic : epics.values()) {
-                if (!((epic.getSubTaskIds()).contains(id) == false)) {
+                if ((epic.getSubTaskIds()).contains(id)) {
                     (epic.getSubTaskIds()).remove(epic.getSubTaskIds().indexOf(id)); //отвезка сабтаски от эпика
                     if (epic.getSubTaskIds().size() == 0) {
                         epic.setStatus(Status.NEW);  //установление статуса эпика - new, если сабтасок больше нет
