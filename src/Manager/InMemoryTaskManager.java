@@ -184,6 +184,7 @@ public class InMemoryTaskManager implements TaskManager {
     public boolean deleteTaskById(int id) {
         if (tasks.containsKey(id)) {
             tasks.remove(id); //Удаление задачи
+            history.remove(id);
             return true;
         } else {
             return false;// задача не найдена
@@ -197,8 +198,10 @@ public class InMemoryTaskManager implements TaskManager {
             ArrayList<Integer> tasks = epics.get(id).getSubTaskIds();
             for (Integer task : tasks) {
                 subtasks.remove(task);// Удаление всех связанных сабтасок с эпиком
+                history.remove(task);
             }
             epics.remove(id); // Удаление эпика
+            history.remove(id);
             return true;
         } else {
             return false; //Эпик не найден
@@ -217,6 +220,7 @@ public class InMemoryTaskManager implements TaskManager {
                     }
                 }
             }
+            history.remove(id);
             subtasks.remove(id); //удаление сабтаски
             return true;
         } else {

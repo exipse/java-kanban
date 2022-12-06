@@ -12,4 +12,7 @@ public interface HistoryManager {
     //возврат списка значений
     List<Task> getHistory();
 
+    //удаление предыдущего просмотра
+    void remove(int id);
+
 }

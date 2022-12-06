@@ -1,27 +1,94 @@
 package History;
 
+import History.Util.Node;
 import Model.Task;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private static List<Task> logAllTasks = new ArrayList<>();
-    private static final int SIZE_TABLE_HISTORY = 10;
+    private static CustomLinkedList<Task> linkList = new CustomLinkedList<>();
+    private static Map<Integer, Node> helpHashMap = new HashMap<>();
 
     //метод по получению актуальных данных в таблице истории
     @Override
     public List<Task> getHistory() {
-        return logAllTasks;
+        return linkList.getTasks();
     }
 
     @Override
     //метод добавления тасок/эпиков/сабтасок в историю
     public void add(Task task) {
-        if (logAllTasks.size() == SIZE_TABLE_HISTORY) {
-            logAllTasks.remove(0);
+        if (helpHashMap.containsKey(task.getId()) == true) {
+            linkList.removeNode(helpHashMap.get(task.getId()));
         }
-        logAllTasks.add(task);
+        linkList.linkLast(task);
+        helpHashMap.put(task.getId(), linkList.tail);
     }
+
+    @Override
+    public void remove(int id) {
+        linkList.removeNode(helpHashMap.get(id));
+        helpHashMap.remove(id);
+    }
+
+
+    public static class CustomLinkedList<Task> {
+        private Node<Task> head;
+        private Node<Task> tail;
+        private int size = 0;
+
+        //метод по добавлению задач в конец связанного списка
+        public void linkLast(Task task) {
+            final Node<Task> oldTail = tail;
+            final Node<Task> newTail = new Node<>(oldTail, task, null);
+            tail = newTail;
+            if (oldTail == null) {
+                head = newTail;
+            } else {
+                oldTail.next = newTail;
+            }
+            size++;
+        }
+
+        //метод по "вырезанию" задачи
+        public void removeNode(Node<Task> node) {
+            Node<Task> beforeTask = node.prev;
+            Node<Task> afterTask = node.next;
+            //установка новых головы/хвоста, если это удалеямый элемент
+            if ((head.equals(node) && tail.equals(node))) {
+                head = null;
+                tail = null;
+            } else if (head.equals(node)) {
+                head = afterTask;
+            } else if (tail.equals(node)) {
+                tail = beforeTask;
+            }
+            node.prev = null;
+            node.next = null;
+            if (beforeTask != null && afterTask != null) {
+                beforeTask.next = afterTask;
+                afterTask.prev = beforeTask;
+            } else if (beforeTask == null) {
+                afterTask.prev = null;
+            } else if (afterTask == null) {
+                beforeTask.next = null;
+            }
+            size--;
+        }
+
+        public List<Model.Task> getTasks() {
+            List<Model.Task> arrayList = new ArrayList<>();
+            Node currentElement = linkList.head;
+            while (currentElement != null) {
+                arrayList.add((Model.Task) currentElement.data);
+                currentElement = currentElement.next;
+            }
+            return arrayList;
+        }
+
+
+    }
+
+
 }
