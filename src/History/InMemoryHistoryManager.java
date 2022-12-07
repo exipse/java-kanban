@@ -1,6 +1,6 @@
 package History;
 
-import History.Util.Node;
+//import History.Util.Node;
 import Model.Task;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import java.util.*;
 public class InMemoryHistoryManager implements HistoryManager {
 
     private static CustomLinkedList<Task> linkList = new CustomLinkedList<>();
-    private static Map<Integer, Node> helpHashMap = new HashMap<>();
+    private static Map<Integer, CustomLinkedList.Node> helpHashMap = new HashMap<>();
 
     //метод по получению актуальных данных в таблице истории
     @Override
@@ -32,11 +32,22 @@ public class InMemoryHistoryManager implements HistoryManager {
         helpHashMap.remove(id);
     }
 
-
     public static class CustomLinkedList<Task> {
         private Node<Task> head;
         private Node<Task> tail;
         private int size = 0;
+
+        class Node<T> {
+            public Node<T> next;
+            public Node<T> prev;
+            public T data;
+
+            public Node(Node<T> prev, T data,Node<T> next) {
+                this.next = next;
+                this.prev = prev;
+                this.data = data;
+            }
+        }
 
         //метод по добавлению задач в конец связанного списка
         public void linkLast(Task task) {
@@ -71,7 +82,7 @@ public class InMemoryHistoryManager implements HistoryManager {
                 afterTask.prev = beforeTask;
             } else if (beforeTask == null) {
                 afterTask.prev = null;
-            } else if (afterTask == null) {
+            } else  {
                 beforeTask.next = null;
             }
             size--;
@@ -79,7 +90,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
         public List<Model.Task> getTasks() {
             List<Model.Task> arrayList = new ArrayList<>();
-            Node currentElement = linkList.head;
+            Node<Task> currentElement = (Node<Task>) linkList.head;
             while (currentElement != null) {
                 arrayList.add((Model.Task) currentElement.data);
                 currentElement = currentElement.next;
