@@ -10,6 +10,7 @@ public class Epic extends Task {
         super(name, description);
         this.id = count = count + 1;
         this.status = Status.NEW;
+        this.type = TypeTask.EPIC;
     }
 
     public ArrayList<Integer> getSubTaskIds() {
@@ -30,4 +31,6 @@ public class Epic extends Task {
                 ", subTaskIds=" + subTaskIds +
                 '}' + "\n";
     }
+
+
 }

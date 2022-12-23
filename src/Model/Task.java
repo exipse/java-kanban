@@ -9,6 +9,7 @@ public class Task {
     protected String name;
     protected String description;
     protected Status status;
+    protected TypeTask type;
 
     public Task(String name, String description) {
         this.name = name;
@@ -20,6 +21,7 @@ public class Task {
         this.name = name;
         this.description = description;
         this.status = status;
+        this.type = TypeTask.TASK;
     }
 
     public int getId() {
@@ -58,6 +60,10 @@ public class Task {
                 ", description='" + description + '\'' +
                 ", status=" + status +
                 '}' + "\n";
+    }
+
+    public String fromObjectToString() {
+        return String.format("%d,%s,%s,%s,%s,\n", id, type, name, status, description);
     }
 
     @Override

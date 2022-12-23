@@ -1,0 +1,12 @@
+id,type,name,status,description,epic
+1,TASK,Task1,NEW,просто Таска1,
+8,TASK,Task2,NEW,просто Таска2,
+2,EPIC,Epic1,DONE,Описание эпика 1,
+4,EPIC,Epic2,NEW,Эпик без сабтасок,
+5,EPIC,Epic3,DONE,Описание эпика 3,
+3,SUBTASK,SubTask1,DONE,сабтаска 1-го эпика №1 ,2
+6,SUBTASK,SubTask2,DONE,сабтаска 3-го эпика,5
+7,SUBTASK,SubTask3,DONE,еще 1 сабтаска 3-го эпика,5
+9,SUBTASK,SubTask4,DONE,сабтаска 1-го эпика №2,2
+
+2,6,8

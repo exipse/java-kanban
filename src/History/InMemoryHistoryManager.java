@@ -1,6 +1,5 @@
 package History;
 
-//import History.Util.Node;
 import Model.Task;
 
 import java.util.*;
@@ -19,7 +18,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     //метод добавления тасок/эпиков/сабтасок в историю
     public void add(Task task) {
-        if (helpHashMap.containsKey(task.getId()) == true) {
+        if (helpHashMap.containsKey(task.getId())) {
             linkList.removeNode(helpHashMap.get(task.getId()));
         }
         linkList.linkLast(task);
@@ -42,7 +41,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             public Node<T> prev;
             public T data;
 
-            public Node(Node<T> prev, T data,Node<T> next) {
+            public Node(Node<T> prev, T data, Node<T> next) {
                 this.next = next;
                 this.prev = prev;
                 this.data = data;
@@ -82,7 +81,7 @@ public class InMemoryHistoryManager implements HistoryManager {
                 afterTask.prev = beforeTask;
             } else if (beforeTask == null) {
                 afterTask.prev = null;
-            } else  {
+            } else {
                 beforeTask.next = null;
             }
             size--;
@@ -97,9 +96,5 @@ public class InMemoryHistoryManager implements HistoryManager {
             }
             return arrayList;
         }
-
-
     }
-
-
 }

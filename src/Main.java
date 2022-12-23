@@ -1,81 +1,39 @@
-import Model.*;
-import Manager.InMemoryTaskManager;
+import Manager.FileBackedTasksManager;
+import Model.Epic;
+import Model.Status;
+import Model.SubTask;
+import Model.Task;
 
-
-import java.util.ArrayList;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class Main {
 
     public static void main(String[] args) {
-        InMemoryTaskManager manInMem = new InMemoryTaskManager();
-        SubTask oSub;
-        List<Task> history; // заменить потом тип листа
-        boolean bEpic;
-        boolean bSubtask;
+        List<Task> history;
 
-        // Проверка методов Тасок
-        //Создание двух задач, эпика с тремя подзадачами и эпика без подзадач;
-        manInMem.createTask(new Task("Таска - 1", "Описание 1...", Status.NEW));
-        manInMem.createTask(new Task("Таска - 2", "Описание 2...", Status.IN_PROGRESS));
+//        FileBackedTasksManager file = new FileBackedTasksManager(Paths.get("src/files/saveFileStatic.txt"));
+//        file.createTask(new Task("Task1", "просто Таска1", Status.NEW));
+//        file.createEpic(new Epic("Epic1", "Описание эпика 1"));
+//        file.createSubTask(new SubTask("SubTask1", "сабтаска 1-го эпика №1 ", Status.DONE, 2));
+//        file.createEpic(new Epic("Epic2", "Эпик без сабтасок"));
+//        file.createEpic(new Epic("Epic3", "Описание эпика 3"));
+//        file.createSubTask(new SubTask("SubTask2", "сабтаска 3-го эпика", Status.DONE, 5));
+//        file.createSubTask(new SubTask("SubTask3", "еще 1 сабтаска 3-го эпика", Status.DONE, 5));
+//        file.createTask(new Task("Task2", "просто Таска2", Status.NEW));
+//        file.createSubTask(new SubTask("SubTask4", "сабтаска 1-го эпика №2", Status.DONE, 2));
+//        file.getEpic(2);
+//        file.getSubTask(6);
+//        file.getTask(8);
 
-        manInMem.createEpic(new Epic("Эпик 1", "Эпик с 3 подзадачами"));
+        FileBackedTasksManager file = FileBackedTasksManager.loadFromFile((Paths.get("src/files/saveFileStatic.txt")).toFile());
 
-        //Создание Сабтасок
-        oSub = manInMem.createSubTask(new SubTask("СабТаска 1из3 в эпике 1 ", "Описание сабтаски 1", Status.DONE, 3));
-        if (oSub == null) {
-            System.out.println(("\nНельзя создать Subtask, т.к Эпика не существует"));
-        }
-
-        oSub = manInMem.createSubTask(new SubTask("СабТаска 2из3 в эпике 1 ", "Описание сабтаски 2", Status.IN_PROGRESS, 3));
-        if (oSub == null) {
-            System.out.println(("\nНельзя создать Subtask, т.к Эпика не существует"));
-        }
-
-        oSub = manInMem.createSubTask(new SubTask("СабТаска 3из3 в эпике 1 ", "Описание сабтаски 3", Status.IN_PROGRESS, 3));
-        if (oSub == null) {
-            System.out.println(("\nНельзя создать Subtask, т.к Эпика не существует"));
-        }
-
-        manInMem.createEpic(new Epic("Эпик 2", "Эпик без подзадач"));
-
-        //Запрос созданных задач несколько раз в разном порядке;
-        manInMem.getTask(1);
-        manInMem.getTask(2);
-        manInMem.getEpic(3);
-        manInMem.getSubTask(4);
-        manInMem.getSubTask(5);
-        manInMem.getSubTask(6);
-        manInMem.getEpic(7);
-        manInMem.getSubTask(6);
-        manInMem.getSubTask(4);
-        manInMem.getTask(2);
-        manInMem.getEpic(3);
-
-        //Вывод на экран истории просмотра тасок/сабтасок/эпиков
-        history = manInMem.getHistory();
+        System.out.println("\nВосстановленная история просмотра из файла:");
+        history = file.getHistory();
         for (Task taskHistory : history) {
             System.out.println(taskHistory);
         }
 
-        bSubtask = manInMem.deleteTaskById(1);
-        if (bSubtask == true) {
-            System.out.println("\nТаска удалена");
-        } else {
-            System.out.println("\nТаска по id не найдена");
-        }
-
-        bEpic = manInMem.deleteEpicById(3);
-        if (bEpic == true) {
-            System.out.println("\nЭпик и связанные с ним сабтаски удалены\n");
-        } else {
-            System.out.println("\nЭпик не найден");
-        }
-
-        history = manInMem.getHistory();
-        for (Task taskHistory : history) {
-            System.out.println(taskHistory);
-        }
     }
 
 }

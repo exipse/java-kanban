@@ -1,7 +1,11 @@
 package Manager;
 
-import History.*;
-import Model.*;
+import History.HistoryManager;
+import History.InMemoryHistoryManager;
+import Model.Epic;
+import Model.Status;
+import Model.SubTask;
+import Model.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,18 +17,6 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Epic> epics = new HashMap<>();
     private final HashMap<Integer, SubTask> subtasks = new HashMap<>();
     private final HistoryManager history = new InMemoryHistoryManager();
-
-    public HashMap<Integer, Task> getTasks() {
-        return tasks;
-    }
-
-    public HashMap<Integer, Epic> getEpics() {
-        return epics;
-    }
-
-    public HashMap<Integer, SubTask> getSubtasks() {
-        return subtasks;
-    }
 
     //Метод создание Таски
     @Override
@@ -85,7 +77,6 @@ public class InMemoryTaskManager implements TaskManager {
         return null;
     }
 
-
     //Получение таски по идентификатору
     @Override
     public Task getTask(int id) {
@@ -106,7 +97,6 @@ public class InMemoryTaskManager implements TaskManager {
             return epics.get(id);
         }
         return null;
-
     }
 
     //Получение списка всех подзадач определённого эпика.
@@ -138,6 +128,11 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Task> getHistory() {
         return Managers.getDefaultHistory().getHistory();
+    }
+
+    @Override
+    public HistoryManager getObjectHistory() {
+        return history;
     }
 
     //Получение списка всех тасок

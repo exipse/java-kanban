@@ -1,5 +1,6 @@
 package Manager;
 
+import History.HistoryManager;
 import Model.Epic;
 import Model.SubTask;
 import Model.Task;
@@ -32,6 +33,8 @@ public interface TaskManager {
 
     //Получение истории по просмотренным таскам/сабтаскам/эпикам
     public List<Task> getHistory();
+
+    public HistoryManager getObjectHistory();
 
     //Получение списка всех подзадач определённого эпика.
     public ArrayList<SubTask> getAllSubTaskByEpic(int id);
