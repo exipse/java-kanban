@@ -1,23 +1,19 @@
 package Manager;
 
-import History.*;
+import History.HistoryManager;
+import History.InMemoryHistoryManager;
 
-public final class Managers<T extends TaskManager> {
+import java.nio.file.Paths;
 
-    private static HistoryManager historyManager = new InMemoryHistoryManager();
-    TaskManager newObject;
-
-    public Managers(T newObject) {
-        this.newObject = newObject;
-    }
+public final class Managers {
 
     //Возврат объекта InMemoryHistoryManager
     public static HistoryManager getDefaultHistory() {
-        return historyManager;
+        return new InMemoryHistoryManager();
     }
 
-    public TaskManager getDefault() {
-        return newObject;
+    //Возврат объекта FileBackedTasksManager
+    public static TaskManager getDefault() {
+        return new FileBackedTasksManager(Paths.get("src/files/saveFileStatic.txt"));
     }
-
 }

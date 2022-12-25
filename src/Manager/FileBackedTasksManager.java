@@ -2,6 +2,7 @@ package Manager;
 
 import History.HistoryManager;
 import Model.*;
+import exception.ManagerLoadException;
 import exception.ManagerSaveException;
 
 import java.io.BufferedWriter;
@@ -18,22 +19,18 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private Path newFile;
 
-    public FileBackedTasksManager(Path newFile) {
+    protected FileBackedTasksManager(Path newFile) {
         this.newFile = newFile;
     }
 
-    public Path getNewFile() {
-        return newFile;
-    }
-
     //метод автосохранения
-    public void save() {
+    private void save() throws ManagerSaveException {
         List<String> allTasks = new ArrayList<>();
         List<Task> tasks = getTaskList();
         List<Epic> epics = getEpicList();
         List<SubTask> subTasks = getSubTaskList();
 
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getNewFile().toFile(), StandardCharsets.UTF_8))) {
+        try (BufferedWriter buff = new BufferedWriter(new FileWriter(newFile.toFile(), StandardCharsets.UTF_8))) {
             String firstLine = "id,type,name,status,description,epic\n";
             if (tasks != null) {
                 for (Task task : tasks) {
@@ -50,44 +47,41 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     allTasks.add(toString(subTask));
                 }
             }
-            bufferedWriter.write(firstLine);
+            buff.write(firstLine);
             for (String allTask : allTasks) {
-                bufferedWriter.write(allTask);
+                buff.write(allTask);
             }
-            bufferedWriter.write("\n");
-            bufferedWriter.write(historyToString(getObjectHistory()));
+            buff.write("\n");
+            buff.write(historyToString(getObjectHistory()));
 
         } catch (IOException e) {
-            try {
-                throw new ManagerSaveException("Ошибка при работе с файлом");
-            } catch (ManagerSaveException ex) {
-                ex.printStackTrace();
-            }
+            throw new ManagerSaveException("Ошибка при сохранении данных в файл");
         }
     }
 
     //метод сохраения задачи в строку
-    public String toString(Task task) {
+    private String toString(Task task) {
         return task.fromObjectToString();
     }
 
 
     //сохранение менеджера в историю
-    static String historyToString(HistoryManager manager) {
-        String actualHistory = "";
+    private static String historyToString(HistoryManager manager) {
+        StringBuilder actualhistory = new StringBuilder();
         List<Task> historys = manager.getHistory();
         for (Task history : historys) {
-            if (actualHistory.isBlank()) {
-                actualHistory = "" + history.getId();
+            if (actualhistory.length() == 0) {
+                actualhistory.append(history.getId());
             } else {
-                actualHistory = actualHistory + "," + history.getId();
+                actualhistory.append("," + history.getId());
             }
         }
+        String actualHistory = actualhistory.toString();
         return actualHistory;
     }
 
-    //восстановления менеджера из истории
-    static List<Integer> historyFromString(String value) {
+    //восстановление менеджера из истории
+    private static List<Integer> historyFromString(String value) {
         List<Integer> numberTasks = new ArrayList<>();
         String[] numbers = value.split(",");
         for (int i = 0; i < numbers.length; i++) {
@@ -97,7 +91,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     //метод создания задачи из строки
-    public Task fromString(String value) {
+    private Task fromString(String value) {
         String[] eachLine = value.split(",");
         Task task = null;
         if (eachLine[1].equals(String.valueOf(TypeTask.TASK))) {
@@ -113,22 +107,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     //восстановление данные менеджера из файла при запуске программы
-    public static FileBackedTasksManager loadFromFile(File file) {
+    public static FileBackedTasksManager loadFromFile(File file) throws ManagerLoadException {
 
         Path resultFile = Paths.get("src/files/recoveryTasks.txt");
         FileBackedTasksManager fileBacked = new FileBackedTasksManager(resultFile);
 
         Path path = file.toPath();
         String stringPath = path.getParent() + "/" + path.getFileName();
-
-        Comparator<Integer> userComparator = new Comparator<>() {
-            @Override
-            public int compare(Integer number1, Integer number2) {
-                return number1.compareTo(number2);
-            }
-        };
-        Map<Integer, String> sortedTasks = new TreeMap<>(userComparator);
-
+        Map<Integer, String> sortedTasks = new TreeMap<>(Comparator.naturalOrder());
         try {
             String newFiles = Files.readString(Path.of(stringPath));
             String[] lines = newFiles.split("\n");
@@ -150,12 +136,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 fileBacked.findTypeTask(historyInList.get(i));
             }
         } catch (IOException e) {
-
+            throw new ManagerLoadException("Произошла ошибка чтения из файла");
         }
         System.out.println("Задачи считаны из файла");
-//        System.out.println(fileBacked.getSubTaskList());
-//        System.out.println(fileBacked.getEpicList());
-//        System.out.println(fileBacked.getTaskList());
         return fileBacked;
     }
 
@@ -175,42 +158,66 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public Task createTask(Task task) {
         super.createTask(task);
-        save();
+        try {
+            save();
+        } catch (ManagerSaveException e) {
+            e.getMessage();
+        }
         return task;
     }
 
     @Override
     public Epic createEpic(Epic epic) {
         super.createEpic(epic);
-        save();
+        try {
+            save();
+        } catch (ManagerSaveException e) {
+            e.getMessage();
+        }
         return epic;
     }
 
     @Override
     public SubTask createSubTask(SubTask sub) {
         super.createSubTask(sub);
-        save();
+        try {
+            save();
+        } catch (ManagerSaveException e) {
+            e.getMessage();
+        }
         return sub;
     }
 
     @Override
     public Task getTask(int id) {
         Task task = super.getTask(id);
-        save();
+        try {
+            save();
+        } catch (ManagerSaveException e) {
+            e.getMessage();
+        }
         return task;
     }
 
     @Override
     public Epic getEpic(int id) {
         Epic epic = super.getEpic(id);
-        save();
+        try {
+            save();
+        } catch (ManagerSaveException e) {
+            e.getMessage();
+        }
         return epic;
     }
 
     @Override
     public SubTask getSubTask(int id) {
         SubTask subtask = super.getSubTask(id);
-        save();
+        try {
+            save();
+        } catch (ManagerSaveException e) {
+            e.getMessage();
+        }
         return subtask;
     }
 
@@ -222,21 +229,33 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public boolean deleteTaskById(int id) {
         boolean result = super.deleteTaskById(id);
-        save();
+        try {
+            save();
+        } catch (ManagerSaveException e) {
+            e.getMessage();
+        }
         return result;
     }
 
     @Override
     public boolean deleteEpicById(int id) {
         boolean result = super.deleteEpicById(id);
-        save();
+        try {
+            save();
+        } catch (ManagerSaveException e) {
+            e.getMessage();
+        }
         return result;
     }
 
     @Override
     public boolean deleteSubTaskById(int id) {
         boolean result = super.deleteSubTaskById(id);
-        save();
+        try {
+            save();
+        } catch (ManagerSaveException e) {
+            e.getMessage();
+        }
         return result;
     }
 
