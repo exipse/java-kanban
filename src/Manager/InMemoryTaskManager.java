@@ -115,7 +115,7 @@ public class InMemoryTaskManager implements TaskManager {
             SubTask old = subtasks.get(sub.getId());
             subtasks.put(sub.getId(), sub);
             setEpicStatus(sub);
-            if (!(sub.getStartTime() == null)) {
+            if (sub.getStartTime() != null) {
                 try {
                     if (isCorrectValidate(sub)) {
                         getPrioritizedTasks().remove(old);
@@ -389,26 +389,26 @@ public class InMemoryTaskManager implements TaskManager {
             getDefaultTimeEpic(epicId);
             return;
         }
-        LocalDateTime a = LocalDateTime.MIN;
-        Task Aa = null;
-        LocalDateTime b = LocalDateTime.MAX;
+        LocalDateTime finishTime = LocalDateTime.MIN;
+        Task lastTaskInEpic = null;
+        LocalDateTime startTime = LocalDateTime.MAX;
         long sum = 0;
         for (SubTask subTaskbyEpic : subtasksByEpicFilter) {
-            if (subTaskbyEpic.getStartTime().isBefore(b)) {
-                b = subTaskbyEpic.getStartTime();// 3
+            if (subTaskbyEpic.getStartTime().isBefore(startTime)) {
+                startTime = subTaskbyEpic.getStartTime();// 3
             }
-            if (subTaskbyEpic.getStartTime().isAfter(a)) {
-                a = subTaskbyEpic.getStartTime();
-                Aa = subTaskbyEpic;//1232
+            if (subTaskbyEpic.getStartTime().isAfter(finishTime)) {
+                finishTime = subTaskbyEpic.getStartTime();
+                lastTaskInEpic = subTaskbyEpic;//1232
             }
             sum = sum + subTaskbyEpic.getDuration();
         }
-        currentEpic.setStartTime(b);
+        currentEpic.setStartTime(startTime);
         currentEpic.setDuration(sum);
         if (subtasksByEpicFilter.size() == 1) {
-            currentEpic.setFinishTime(b.plusMinutes(sum));
+            currentEpic.setFinishTime(startTime.plusMinutes(sum));
         } else {
-            currentEpic.setFinishTime(Aa.getFinishTime());
+            currentEpic.setFinishTime(lastTaskInEpic.getFinishTime());
         }
     }
 

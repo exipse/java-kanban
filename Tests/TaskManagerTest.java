@@ -15,11 +15,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class TaskManagerTest<T extends TaskManager> {
 
     protected T manager;
-    Task oTask1 =
+    final Task O_TASK_1 =
             new Task("Таска - 1", "Описание 1...", Status.NEW, LocalDateTime.now(), 10);
-    Epic oEpic1 =
+    final Epic O_EPIC_1 =
             new Epic("Epic1", "Описание эпика 1");
-    SubTask oSub1 =
+    final SubTask O_SUB_1 =
             new SubTask("SubTask1", "сабтаска 1-го эпика", Status.NEW,
                     2, LocalDateTime.now().plusDays(5), 2);
 
@@ -29,25 +29,23 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void createTaskTest() {
-        Task task = oTask1;
-        manager.getTaskList();
-        manager.createTask(task);
+        assertNull(manager.getTaskList());
+        manager.createTask(O_TASK_1);
         List<Task> tasks = manager.getTaskList();
-        assertNotNull(manager.getTaskList());
-        assertEquals(1, manager.getTaskList().size(), "Неверное количество задач.");
-        assertEquals(10, task.getDuration());
+        assertNotNull(tasks);
+        assertEquals(1, tasks.size(), "Неверное количество задач.");
+        assertEquals(10, O_TASK_1.getDuration());
     }
 
     @Test
     public void createEpicTestWithOutTask() {
-        Epic epic = oEpic1;
-        manager.createEpic(epic);
-        assertNotNull(epic.getStatus());
+        manager.createEpic(O_EPIC_1);
+        assertNotNull(O_EPIC_1.getStatus());
         assertEquals(1, manager.getEpicList().size(), "Эпик не сохранился.");
-        assertEquals(0, manager.getEpic(epic.getId()).getSubTaskIds().size(),
+        assertEquals(0, manager.getEpic(O_EPIC_1.getId()).getSubTaskIds().size(),
                 "В эпике есть сабтаски");
-        assertEquals(Status.NEW, epic.getStatus());
-        assertEquals(new ArrayList<>(), epic.getSubTaskIds(),
+        assertEquals(Status.NEW, O_EPIC_1.getStatus());
+        assertEquals(new ArrayList<>(), O_EPIC_1.getSubTaskIds(),
                 "Ошибка. В созданном эпике обнаружились сабтаски");
     }
 
@@ -56,6 +54,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         createFastTasks();
         assertNotNull(manager.getEpic(2), "Проверьте наличие эпика по идентификатору");
         Epic epic = manager.getEpic(2);
+        System.out.println(epic);
         List<Epic> epics = manager.getEpicList();
         assertEquals(Status.NEW, epic.getStatus(), "Эпик не в Статусе - NEW");
         assertEquals(1, epics.size(), "Эпик не сохранился.");
@@ -119,105 +118,96 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     public void createSubTaskWithNoExistEpic() {
         assertNull(manager.getSubTaskList(), "Сабтасок не должно быть");
         assertNull(manager.getEpic(Integer.MAX_VALUE), "Эпик c Id не должен быть создан");
-        SubTask newsubTask =
+        SubTask newSubTask =
                 new SubTask("SubTask2", "сабтаска 1-го эпика", Status.DONE,
                         Integer.MAX_VALUE, LocalDateTime.now().plusDays(20), 77);
-        manager.createSubTask(newsubTask);
+        manager.createSubTask(newSubTask);
         assertNull(manager.getSubTaskList(), "Сабтаска не должна быть создана");
     }
 
     @Test
     public void createSubTaskTest() {
-        Epic epic = oEpic1;
-        manager.createEpic(epic);
-        SubTask subtask = oSub1;
-        manager.createSubTask(subtask);
-        assertNotNull(subtask.getStatus());
+        manager.createEpic(O_EPIC_1);
+        manager.createSubTask(O_SUB_1);
+        assertNotNull(O_SUB_1.getStatus());
         assertEquals(1, manager.getSubTaskList().size(), "Сабтаска не сохранилась");
-        assertEquals(Status.NEW, subtask.getStatus());
-        assertEquals(oSub1.getEpicId(), oEpic1.getId(), "Эпик у сабтаски не найден");
-        assertEquals(manager.getEpic(subtask.getEpicId()).getSubTaskIds().get(0), subtask.getId(),
+        assertEquals(Status.NEW, O_SUB_1.getStatus());
+        assertEquals(O_SUB_1.getEpicId(), O_EPIC_1.getId(), "Эпик у сабтаски не найден");
+        assertEquals(manager.getEpic(O_SUB_1.getEpicId()).getSubTaskIds().get(0), O_SUB_1.getId(),
                 "Сабкаска не привязана к эпику");
     }
 
     //Метод Обновление Таски, Эпика, Сабтаски
     @Test
     public void updateTaskTest() {
-        Task task = oTask1;
-        manager.createTask(task);
-        task.setName("Обновленная Таска - 1");
-        task.setDescription("Новое Описание 1");
-        task.setStatus(Status.IN_PROGRESS);
-        task.setDuration(55);
-        manager.updateTask(task);
-        assertNotNull(task.getStatus());
-        assertEquals(55, task.getDuration(), " Продолжительность таски не изменилась");
-        assertEquals(Status.IN_PROGRESS, task.getStatus());
+        manager.createTask(O_TASK_1);
+        O_TASK_1.setName("Обновленная Таска - 1");
+        O_TASK_1.setDescription("Новое Описание 1");
+        O_TASK_1.setStatus(Status.IN_PROGRESS);
+        O_TASK_1.setDuration(55);
+        manager.updateTask(O_TASK_1);
+        assertNotNull(O_TASK_1.getStatus());
+        assertEquals(55, O_TASK_1.getDuration(), " Продолжительность таски не изменилась");
+        assertEquals(Status.IN_PROGRESS, O_TASK_1.getStatus());
     }
 
     @Test
     public void updateNoExitTaskTest() {
-        Task task = oTask1;
         assertNull(manager.getTaskList(), "Тасок не должно быть");
-        task.setName("Несуществующая Таска");
-        task.setDescription("Новое Описание 1");
-        task.setStatus(Status.IN_PROGRESS);
-        task.setDuration(77);
-        manager.updateTask(task);
+        O_TASK_1.setName("Несуществующая Таска");
+        O_TASK_1.setDescription("Новое Описание 1");
+        O_TASK_1.setStatus(Status.IN_PROGRESS);
+        O_TASK_1.setDuration(77);
+        manager.updateTask(O_TASK_1);
         assertNull(manager.getTaskList(), "Тасок не должно быть");
     }
 
     @Test
     public void updateEpicTest() {
-        Epic epic = oEpic1;
-        manager.createEpic(epic);
-        epic.setName("Измененный Эпик 1");
-        epic.setDescription("Обновленное Описание");
-        manager.updateEpic(epic);
-        List<Epic> epics = manager.getEpicList();
-        assertNotNull(epic.getStatus());
+        manager.createEpic(O_EPIC_1);
+        O_EPIC_1.setName("Измененный Эпик 1");
+        O_EPIC_1.setDescription("Обновленное Описание");
+        manager.updateEpic(O_EPIC_1);
+        assertNotNull(O_EPIC_1.getStatus());
         assertEquals(1, manager.getEpicList().size(), "Эпик не сохранился.");
-        assertEquals(Status.NEW, epic.getStatus());
-        assertEquals(new ArrayList<>(), epic.getSubTaskIds(),
+        assertEquals(Status.NEW, O_EPIC_1.getStatus());
+        assertEquals(new ArrayList<>(), O_EPIC_1.getSubTaskIds(),
                 "Ошибка. В созданном эпике обнаружились сабтаски");
         System.out.println("");
     }
 
     @Test
     public void updateNoExitEpicTest() {
-        Epic epic = oEpic1;
         assertNull(manager.getEpicList(), "Эпиков не должно быть");
-        epic.setName("Несуществующий Эпик");
-        manager.updateEpic(epic);
+        O_EPIC_1.setName("Несуществующий Эпик");
+        manager.updateEpic(O_EPIC_1);
         assertNull(manager.getEpicList(), "Эпиков не должно быть");
     }
 
     @Test
     public void updateSubTaskTest() {
-        manager.createEpic(oEpic1);
-        manager.createSubTask(oSub1);
-        SubTask subtask = oSub1;
-        subtask.setName("Обновленная Таска - 1");
-        subtask.setDescription("Новое Описание 1");
-        subtask.setStatus(Status.IN_PROGRESS);
-        subtask.setStartTime(subtask.getStartTime().plusDays(10));
-        subtask.setDuration(60);
-        manager.updateSubTask(subtask);
-        assertNotNull(subtask.getStatus());
-        assertEquals(60, subtask.getDuration(), " Продолжительность сабтаски не поменялась");
-        assertEquals(Status.IN_PROGRESS, subtask.getStatus());
-        assertEquals(manager.getEpic(subtask.getEpicId()).getSubTaskIds().get(0), subtask.getId(),
+        manager.createEpic(O_EPIC_1);
+        manager.createSubTask(O_SUB_1);
+        O_SUB_1.setName("Обновленная Таска - 1");
+        O_SUB_1.setDescription("Новое Описание 1");
+        O_SUB_1.setStatus(Status.IN_PROGRESS);
+        O_SUB_1.setStartTime(O_SUB_1.getStartTime().plusDays(10));
+        O_SUB_1.setDuration(60);
+        manager.updateSubTask(O_SUB_1);
+        assertNotNull(O_SUB_1.getStatus());
+        assertEquals(60, O_SUB_1.getDuration(), " Продолжительность сабтаски не поменялась");
+        assertEquals(Status.IN_PROGRESS, O_SUB_1.getStatus());
+        assertEquals(manager.getEpic(O_SUB_1.getEpicId()).getSubTaskIds().get(0), O_SUB_1.getId(),
                 "Сабкаска не привязана к эпику");
-        assertEquals(oSub1.getFinishTime(), oEpic1.getFinishTime(),
+        assertEquals(O_SUB_1.getFinishTime(), O_EPIC_1.getFinishTime(),
                 "Время конца эпика не совпадает с датом окончания последней задачи ");
     }
 
     @Test
     public void updateNoExitSubTaskTest() {
-        SubTask subtask = oSub1;
         assertNull(manager.getSubTaskList(), "Сабтасок не должно быть");
-        subtask.setName("Несуществующая Сабтаска");
-        manager.updateSubTask(subtask);
+        O_SUB_1.setName("Несуществующая Сабтаска");
+        manager.updateSubTask(O_SUB_1);
         assertNull(manager.getSubTaskList(), "Сабтасок не должно быть");
     }
 
@@ -227,16 +217,15 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         createFastTasks();
         assertNotNull(manager.getTask(1), "Проверьте наличие таски по идентификатору");
         Task task = manager.getTask(1);
-        assertEquals(1, manager.getTask(1).getId(), "Id Таски не совпадают");
+        assertEquals(1, task.getId(), "Id Таски не совпадают");
         assertEquals("Таска - 1", manager.getTask(1).getName(), "Имя задачи не совпадает");
     }
 
     @Test
     public void getNoExitTaskTest() {
         createNewFastTasks();
-        Task task = oTask1;
-        assertEquals(false, manager.getSubTaskList().contains(task));
-        assertNull(manager.getTask(task.getId()), "Сабтаски не должно быть");
+        assertFalse(manager.getSubTaskList().contains(O_TASK_1));
+        assertNull(manager.getTask(O_TASK_1.getId()), "Сабтаски не должно быть");
     }
 
     @Test
@@ -244,16 +233,15 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         createFastTasks();
         assertNotNull(manager.getEpic(2), "Проверьте наличие эпика по идентификатору");
         Epic epic = manager.getEpic(2);
-        assertEquals(2, manager.getEpic(2).getId(), "Id Эпика не совпадают");
+        assertEquals(2, epic.getId(), "Id Эпика не совпадают");
         assertEquals("Epic1", manager.getEpic(2).getName(), "Имя задачи не совпадает");
     }
 
     @Test
     public void getNoExitEpicTest() {
         createNewFastTasks();
-        Epic epic = oEpic1;
-        assertEquals(false, manager.getEpicList().contains(epic));
-        assertNull(manager.getEpic(epic.getId()), "Эпика не должно быть");
+        assertFalse(manager.getEpicList().contains(O_EPIC_1));
+        assertNull(manager.getEpic(O_EPIC_1.getId()), "Эпика не должно быть");
     }
 
     @Test
@@ -261,16 +249,15 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         createFastTasks();
         assertNotNull(manager.getSubTask(3), "Проверьте наличие сабтаски по идентификатору");
         SubTask subTask = manager.getSubTask(3);
-        assertEquals(3, manager.getSubTask(3).getId(), "Id сабтасок не совпадают");
+        assertEquals(3, subTask.getId(), "Id сабтасок не совпадают");
         assertEquals("SubTask1", manager.getSubTask(3).getName(), "Имя задачи не совпадает");
     }
 
     @Test
     public void getNoExitSubTaskTest() {
         createNewFastTasks();
-        SubTask subTask = oSub1;
-        assertEquals(false, manager.getSubTaskList().contains(subTask));
-        assertNull(manager.getSubTask(subTask.getId()), "Сабтаски не должно быть");
+        assertFalse(manager.getSubTaskList().contains(O_SUB_1));
+        assertNull(manager.getSubTask(O_SUB_1.getId()), "Сабтаски не должно быть");
     }
 
     //Получение истории по просмотренным таскам/сабтаскам/эпикам
@@ -330,8 +317,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void getAllSubTaskInEmptyEpicTest() {
-        Epic epic = oEpic1;
-        manager.createEpic(epic);
+        manager.createEpic(O_EPIC_1);
         int count = manager.getEpic(2).getSubTaskIds().size();
         assertEquals(0, count, "Сабтасок у Эпика не должно быть");
     }
@@ -340,7 +326,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void getAllSubTaskInNoExitEpicTest() {
         createNewFastTasks();
-        Epic epic = oEpic1;
+        Epic epic = O_EPIC_1;
         assertNull(manager.getAllSubTaskByEpic(epic.getId()), "Эпика не должно существовать");
     }
 
@@ -395,9 +381,8 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void deleteNoExitTaskByIdTest() {
         createNewFastTasks();
-        Task task = oTask1;
-        assertEquals(false, manager.getTaskList().contains(task), "Таска не должна быть сохранена");
-        assertEquals(false, manager.deleteTaskById(task.getId()), "Таски не должно быть в списке");
+        assertFalse(manager.getTaskList().contains(O_TASK_1), "Таска не должна быть сохранена");
+        assertFalse(manager.deleteTaskById(O_TASK_1.getId()), "Таски не должно быть в списке");
     }
 
     @Test
@@ -415,9 +400,8 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void deleteNoExitEpicByIdTest() {
         createNewFastTasks();
-        Epic epic = oEpic1;
-        assertEquals(false, manager.getEpicList().contains(epic), "Эпик не должен быть сохранен");
-        assertEquals(false, manager.deleteEpicById(epic.getId()), "Эпика не должно быть в списке");
+        assertFalse(manager.getEpicList().contains(O_EPIC_1), "Эпик не должен быть сохранен");
+        assertFalse(manager.deleteEpicById(O_EPIC_1.getId()), "Эпика не должно быть в списке");
     }
 
     @Test
@@ -431,17 +415,16 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Вернулось неверное количество оставшихся сабтасок");
         assertEquals(2, manager.getEpicList().size(),
                 "Вернулось неверное количество эпиков после удаления сабтасок");
-        assertEquals(oSub1.getFinishTime(), oEpic1.getFinishTime(),
+        assertEquals(O_SUB_1.getFinishTime(), O_EPIC_1.getFinishTime(),
                 "Время конца эпика не совпадает с датом окончания последней задачи ");
     }
 
     @Test
     public void deleteNoExitSubTaskByIdTest() {
         createNewFastTasks();
-        SubTask subTask = oSub1;
-        assertEquals(false, manager.getSubTaskList().contains(subTask),
+        assertFalse(manager.getSubTaskList().contains(O_SUB_1),
                 "Сабтаска не должена быть сохранена");
-        assertEquals(false, manager.deleteSubTaskById(subTask.getId()),
+        assertFalse(manager.deleteSubTaskById(O_SUB_1.getId()),
                 "Сабтаски не должно быть в списке");
     }
 
@@ -458,7 +441,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void cleanAllTaskTestInEmptyList() {
         assertNull(manager.getTaskList(), "В списке присутствуют таски");
-        assertEquals(false, manager.cleanAllTask(), "В списке присутствовали таски");
+        assertFalse(manager.cleanAllTask(), "В списке присутствовали таски");
     }
 
     @Test
@@ -474,7 +457,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void cleanAllEpicTestInEmptyList() {
         assertNull(manager.getEpicList(), "В списке присутствуют эпики");
-        assertEquals(false, manager.cleanAllEpic(), "В списке присутствовали эпики");
+        assertFalse(manager.cleanAllEpic(), "В списке присутствовали эпики");
     }
 
     @Test
@@ -486,20 +469,20 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertNull(manager.getSubTaskList(), "Не все эпики удалены");
         assertNull(manager.getEpic(2).getFinishTime(),
                 "Продолжительность эпика не сброшена после удаления всех тасок");
-        assertNull(oEpic1.getFinishTime(),
+        assertNull(O_EPIC_1.getFinishTime(),
                 "Время конца эпика не совпадает с датом окончания последней задачи ");
     }
 
     @Test
     public void cleanAllSubtaskTestInEmptyList() {
         assertNull(manager.getSubTaskList(), "В списке присутствуют сабтаски");
-        assertEquals(false, manager.cleanAllSubTask(), "В списке присутствовали сабтаски");
+        assertFalse(manager.cleanAllSubTask(), "В списке присутствовали сабтаски");
     }
 
     private void createFastTasks() {
-        manager.createTask(oTask1);
-        manager.createEpic(oEpic1);
-        manager.createSubTask(oSub1);
+        manager.createTask(O_TASK_1);
+        manager.createEpic(O_EPIC_1);
+        manager.createSubTask(O_SUB_1);
     }
 
     private void createNewFastTasks() {
