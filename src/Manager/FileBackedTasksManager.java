@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
@@ -31,7 +32,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         List<SubTask> subTasks = getSubTaskList();
 
         try (BufferedWriter buff = new BufferedWriter(new FileWriter(newFile.toFile(), StandardCharsets.UTF_8))) {
-            String firstLine = "id,type,name,status,description,epic\n";
+            String firstLine = "id,type,name,status,description,startTime,duration,finishTime,epic\n";
             if (tasks != null) {
                 for (Task task : tasks) {
                     allTasks.add(toString(task));
@@ -95,13 +96,25 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         String[] eachLine = value.split(",");
         Task task = null;
         if (eachLine[1].equals(String.valueOf(TypeTask.TASK))) {
-            task = createTask(new Task(eachLine[2],
-                    eachLine[4], Status.valueOf(eachLine[3])));
+            if (eachLine[5].equals("null")) {
+                task = createTask(new Task(eachLine[2],
+                        eachLine[4], Status.valueOf(eachLine[3])));
+            } else {
+                task = createTask(new Task(eachLine[2],
+                        eachLine[4], Status.valueOf(eachLine[3]), LocalDateTime.parse(eachLine[5]),
+                        Long.valueOf(eachLine[6])));
+            }
         } else if (eachLine[1].equals(String.valueOf(TypeTask.EPIC))) {
             task = createEpic(new Epic(eachLine[2], eachLine[4]));
         } else if (eachLine[1].equals(String.valueOf(TypeTask.SUBTASK))) {
-            task = createSubTask(new SubTask(eachLine[2], eachLine[4],
-                    Status.valueOf(eachLine[3]), Integer.parseInt(eachLine[5])));
+            if ((eachLine[5].equals("null"))) {
+                task = createSubTask(new SubTask(eachLine[2], eachLine[4],
+                        Status.valueOf(eachLine[3]), Integer.parseInt(eachLine[8])));
+            } else {
+                task = createSubTask(new SubTask(eachLine[2], eachLine[4],
+                        Status.valueOf(eachLine[3]), Integer.parseInt(eachLine[8]),
+                        LocalDateTime.parse(eachLine[5]), Long.valueOf(eachLine[6])));
+            }
         }
         return task;
     }
@@ -129,11 +142,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             for (String sorteredLine : sortedTasks.values()) {
                 fileBacked.fromString(sorteredLine);
             }
-            String historyInLine = lines[lines.length - 1];
-            List<Integer> historyInList = historyFromString(historyInLine);
+            if (lines[lines.length - 2].isBlank()) {
+                String historyInLine = lines[lines.length - 1];
+                List<Integer> historyInList = historyFromString(historyInLine);
 
-            for (int i = 0; i < historyInList.size(); i++) {
-                fileBacked.findTypeTask(historyInList.get(i));
+                for (int i = 0; i < historyInList.size(); i++) {
+                    fileBacked.findTypeTask(historyInList.get(i));
+                }
             }
         } catch (IOException e) {
             throw new ManagerLoadException("Произошла ошибка чтения из файла");
@@ -142,7 +157,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return fileBacked;
     }
 
-    public Task findTypeTask(int number) {
+    private Task findTypeTask(int number) {
         Task task;
         if ((task = getTask(number)) != null) {
             return task;

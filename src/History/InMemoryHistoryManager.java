@@ -2,7 +2,10 @@ package History;
 
 import Model.Task;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
@@ -27,8 +30,10 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
-        linkList.removeNode(helpHashMap.get(id));
-        helpHashMap.remove(id);
+        if (helpHashMap.containsKey(id)) {
+            linkList.removeNode(helpHashMap.get(id));
+            helpHashMap.remove(id);
+        }
     }
 
     public static class CustomLinkedList<Task> {
@@ -69,6 +74,8 @@ public class InMemoryHistoryManager implements HistoryManager {
             if ((head.equals(node) && tail.equals(node))) {
                 head = null;
                 tail = null;
+                size--;
+                return;
             } else if (head.equals(node)) {
                 head = afterTask;
             } else if (tail.equals(node)) {
