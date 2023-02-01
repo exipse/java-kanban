@@ -33,14 +33,12 @@ class HttpTaskServerTest {
 
         taskServer = new HttpTaskServer();
         taskServer.startServer();
-
     }
 
     @AfterEach
     public void stopServer() {
         kvServer.stop();
         taskServer.stopServer();
-
         Task.setCount(0);
     }
 
@@ -88,9 +86,12 @@ class HttpTaskServerTest {
         String task = "{ \"name\":\" -таск-1\",\"description\":\"Описание 1...\"," +
                 "\"status\":\"NEW\",\"startTime\":\"2024-03-26T10:40:19.754705\",\"duration\": 10}";
 
-        String updEpic = "{ \"id\":1,\"name\":\" ЭпикНовый \",\"description\":\"ОПИСАНИЕ ЭПИКА\",\"status\":\"NEW\",\"type\":\"ззз\"}";
-        String updSub = "{ \"id\":2,\"name\":\"Upd sub \",\"description\":\"upd\",\"status\":\"NEW\",\"epicId\":1, \"startTime\":\"2024-07-26T10:40:19.754705\",\"duration\": 10}";
-        String updTask = "{ \"id\":\"3\", \"name\":\" UOD-таск-1\",\"description\":\"Описание 1...\",\"status\":\"NEW\",\"startTime\":\"2024-03-26T10:40:19.754705\",\"duration\": 10}";
+        String updEpic = "{ \"id\":1,\"name\":\" ЭпикНовый \",\"description\":\"ОПИСАНИЕ ЭПИКА\"," +
+                                                                            "\"status\":\"NEW\",\"type\":\"ззз\"}";
+        String updSub = "{ \"id\":2,\"name\":\"Upd sub \",\"description\":\"upd\",\"status\":\"NEW\",\"epicId\":1," +
+                                                     " \"startTime\":\"2024-07-26T10:40:19.754705\",\"duration\": 10}";
+        String updTask = "{ \"id\":\"3\", \"name\":\" UOD-таск-1\",\"description\":\"Описание 1...\"," +
+                "\"status\":\"NEW\",\"startTime\":\"2024-03-26T10:40:19.754705\",\"duration\": 10}";
 
 
         HttpRequest requestEpic = HttpRequest.newBuilder()
