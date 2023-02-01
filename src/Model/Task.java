@@ -45,6 +45,14 @@ public class Task {
         return id;
     }
 
+    public void setId(int id) {
+        if (count == 0) {
+            this.id = count += 1 + id;
+        } else {
+            this.id = count += 1;
+        }
+    }
+
     public String getName() {
         return name;
     }
@@ -67,6 +75,14 @@ public class Task {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public TypeTask getType() {
+        return type;
+    }
+
+    public void setType(TypeTask type) {
+        this.type = type;
     }
 
     public static void setCount(int count) {

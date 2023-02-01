@@ -1,3 +1,5 @@
+package Manager;
+
 import Manager.TaskManager;
 import Model.Epic;
 import Model.Status;
@@ -65,6 +67,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void createEpicTestWithTaskInStatusDone() {
         createFastTasks();
+        SubTask newsubTask2 =
+                new SubTask("SubTask2", "сабтаска 1-го эпика", Status.DONE,
+                        2, LocalDateTime.now().plusDays(20), 77);
         List<Epic> epics = manager.getEpicList();
         assertEquals(1, epics.size(), "Эпик не сохранился.");
         assertEquals(1, manager.getSubTaskList().size(), "Сабтаска не сохранена");

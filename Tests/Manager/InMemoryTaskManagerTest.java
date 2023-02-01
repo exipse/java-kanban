@@ -1,3 +1,5 @@
+package Manager;
+
 import Manager.InMemoryTaskManager;
 import Model.Task;
 import org.junit.jupiter.api.AfterEach;

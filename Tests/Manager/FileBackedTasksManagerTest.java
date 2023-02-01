@@ -1,3 +1,5 @@
+package Manager;
+
 import History.HistoryManager;
 import Manager.FileBackedTasksManager;
 import Manager.Managers;
@@ -6,6 +8,7 @@ import Model.Status;
 import Model.SubTask;
 import Model.Task;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +27,7 @@ class FileBackedTasksManagerTest
 
     @BeforeEach
     public void beforeEach() {
-        setManager((FileBackedTasksManager) Managers.getDefault());
+        setManager(new FileBackedTasksManager(Paths.get("src/files/saveFileStatic.txt")));
     }
 
     @AfterEach
@@ -112,6 +115,6 @@ class FileBackedTasksManagerTest
         assertNotNull(manager.getTaskList());
         Task.setCount(0);
         FileBackedTasksManager.loadFromFile((Paths.get("src/files/saveFileStatic.txt")).toFile());
-        assertEquals(0, manager.getHistory().size());
+        Assertions.assertEquals(0, manager.getHistory().size());
     }
 }

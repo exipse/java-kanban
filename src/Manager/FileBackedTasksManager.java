@@ -20,12 +20,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private Path newFile;
 
-    protected FileBackedTasksManager(Path newFile) {
+    public FileBackedTasksManager(Path newFile) {
         this.newFile = newFile;
     }
 
+    protected FileBackedTasksManager() {
+    }
+
     //метод автосохранения
-    private void save() throws ManagerSaveException {
+    protected void save() throws ManagerSaveException {
         List<String> allTasks = new ArrayList<>();
         List<Task> tasks = getTaskList();
         List<Epic> epics = getEpicList();
@@ -129,7 +132,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         String stringPath = path.getParent() + "/" + path.getFileName();
         Map<Integer, String> sortedTasks = new TreeMap<>(Comparator.naturalOrder());
         try {
-            String newFiles = Files.readString(Path.of(stringPath));
+            String newFiles = Files.readString(Path.of(stringPath)); //вычитка исходного файла
             String[] lines = newFiles.split("\n");
             for (int i = 1; i < lines.length; i++) {
                 String[] eachLine = lines[i].split(",");
@@ -194,13 +197,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     @Override
     public SubTask createSubTask(SubTask sub) {
-        super.createSubTask(sub);
+        SubTask subTask = super.createSubTask(sub);
         try {
             save();
         } catch (ManagerSaveException e) {
             e.getMessage();
         }
-        return sub;
+        return subTask;
     }
 
     @Override
@@ -218,7 +221,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public Epic getEpic(int id) {
         Epic epic = super.getEpic(id);
         try {
-            save();
+            if (!(null == epic)) {
+                save();
+            }
         } catch (ManagerSaveException e) {
             e.getMessage();
         }
@@ -274,4 +279,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return result;
     }
 
+    @Override
+    public Set<Task> getPrioritizedTasks() {
+        return super.getPrioritizedTasks();
+    }
 }

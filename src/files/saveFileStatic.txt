@@ -1,0 +1,8 @@
+id,type,name,status,description,startTime,duration,finishTime,epic
+1,TASK,Таска - 1,NEW,Описание 1...,2023-02-01T22:40:47.335212,10,2023-02-01T22:50:47.335212
+5,TASK,Task2,NEW,просто Таска2,null,0,null
+2,EPIC,Epic1,NEW,Описание эпика 1,null,0,null
+3,EPIC,Epic2,NEW,Эпик без сабтасок,null,0,null
+4,EPIC,Epic3,NEW,Описание эпика 3,null,0,null
+
+2,1

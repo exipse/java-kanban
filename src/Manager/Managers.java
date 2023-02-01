@@ -13,7 +13,12 @@ public final class Managers {
     }
 
     //Возврат объекта FileBackedTasksManager
+//    public static TaskManager getDefault() {
+//        return new FileBackedTasksManager(Paths.get("src/files/saveFileStatic.txt"));
+//    }
+
+    //    Возрат объекта HttpTaskManager
     public static TaskManager getDefault() {
-        return new FileBackedTasksManager(Paths.get("src/files/saveFileStatic.txt"));
+        return new HttpTaskManager("http://localhost:8008");
     }
 }
