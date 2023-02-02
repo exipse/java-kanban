@@ -1,7 +1,5 @@
 package HTTP;
 
-import HTTP.HttpTaskServer;
-import HTTP.KVServer;
 import Model.Task;
 import adapter.LocalDateAdapter;
 import com.google.gson.Gson;
@@ -274,7 +272,6 @@ class HttpTaskServerTest {
                 "Эпик по id не удален");
         assertEquals(respDelTask.body(), "Таска с id = 3 удалена", "Таска по id не удалена");
     }
-
 
     @Test
     void getSubTaskByEpic() throws IOException, InterruptedException {
