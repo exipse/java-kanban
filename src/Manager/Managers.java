@@ -12,12 +12,7 @@ public final class Managers {
         return new InMemoryHistoryManager();
     }
 
-    //Возврат объекта FileBackedTasksManager
-//    public static TaskManager getDefault() {
-//        return new FileBackedTasksManager(Paths.get("src/files/saveFileStatic.txt"));
-//    }
-
-    //    Возрат объекта HttpTaskManager
+    //Возрат объекта HttpTaskManager
     public static TaskManager getDefault() {
         return new HttpTaskManager("http://localhost:8008");
     }
