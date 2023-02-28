@@ -20,7 +20,6 @@ public class Main {
         manager.createTask(new Task("Таска - 1",
                 "Описание 1...", Status.NEW, LocalDateTime.now(), 10));
 
-
         System.out.println("\n" + manager.getTaskList());
         kvServer.stop();
     }
